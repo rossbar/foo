@@ -29,7 +29,9 @@ jobs:
         pip list
 
     - name: Build docs
-      run: make -C doc/ html
+      run: |
+        make -C doc/ html
+        touch doc/_build/html/.nojekyll
 
     - name: Install SSH agent
       if: github.ref == 'refs/heads/master'
