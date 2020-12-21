@@ -1,0 +1,50 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+
+    - name: Setup environment
+      run: |
+        python3 -m venv ~/venv
+        source ~/venv/bin/activate
+
+    - name: Install packages
+      run: |
+        pip install -r requirements.txt
+        pip install -e .
+        pip list
+
+    - name: Build docs
+      run: make -C doc/ html
+
+    - name: Install SSH agent
+      if: github.ref == 'refs/heads/master'
+      uses: webfactory/ssh-agent@v0.4.1
+      with:
+        ssh-private-key: ${{ secrets.CI_DEPLOY_KEY }}
+
+
+    - name: Deploy docs
+      if: github.ref == 'refs/heads/master'
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        FOLDER: doc/_build/html
+        REPOSITORY_NAME: rossbar/foo-doc
+        BRANCH: gh-pages
+        TARGET_FOLDER: latest
+        SSH: true
+
