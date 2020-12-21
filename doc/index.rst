@@ -6,6 +6,9 @@
 Welcome to foo's documentation!
 ===============================
 
+This is a dummy repo for testing doc deployment via gh-actions across
+multiple repos within one org.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
